@@ -7,8 +7,11 @@ import {
   Button,
   ScrollView,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import ImgPicker from "../components/ImgPicker";
 
 import Colors from "../constants/Colors";
+import { addPlace } from "../store/placesSlice";
 
 export default function NewPlaceScreen({ navigation }) {
   useLayoutEffect(() => {
@@ -18,11 +21,24 @@ export default function NewPlaceScreen({ navigation }) {
   });
 
   const [titleValue, setTitleValue] = useState("");
+  const [selectedImage, setSelectedImage] = useState();
+
+  const dispatch = useDispatch();
 
   const titleChangeHandler = (text) => {
+    // Maybe add Validations here
     setTitleValue(text);
   };
 
+  const savePlaceHandler = () => {
+    console.log(titleValue, selectedImage);
+    dispatch(addPlace({ title: titleValue, image: selectedImage }));
+    navigation.goBack();
+  };
+
+  const imageTakenHandler = (imagePath) => {
+    setSelectedImage(imagePath.toString());
+  };
   return (
     <ScrollView>
       <View style={styles.form}>
@@ -31,8 +47,14 @@ export default function NewPlaceScreen({ navigation }) {
           style={styles.textInput}
           onChangeText={titleChangeHandler}
           value={titleValue}
+          autoFocus
         />
-        <Button title="Save Place" color={Colors.primary} onPress={() => {}} />
+        <ImgPicker onImageTaken={imageTakenHandler} />
+        <Button
+          title="Save Place"
+          color={Colors.primary}
+          onPress={savePlaceHandler}
+        />
       </View>
     </ScrollView>
   );

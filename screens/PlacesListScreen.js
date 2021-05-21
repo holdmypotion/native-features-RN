@@ -1,7 +1,15 @@
 import React, { useLayoutEffect } from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
 import { Entypo } from "@expo/vector-icons";
-import { StatusBar } from "expo-status-bar";
+import { useSelector } from "react-redux";
+import { selectAllPlaces } from "../store/placesSlice";
+import PlaceItem from "../components/PlaceItem";
 
 export default function PlacesListScreen({ navigation }) {
   useLayoutEffect(() => {
@@ -24,10 +32,25 @@ export default function PlacesListScreen({ navigation }) {
     });
   });
 
+  const places = useSelector(selectAllPlaces);
+  console.log(places);
   return (
-    <View>
-      <StatusBar style="light" />
-      <Text>places List</Text>
-    </View>
+    <FlatList
+      data={places}
+      keyExtractor={(item) => item.id}
+      renderItem={(itemData) => (
+        <PlaceItem
+          image={itemData.item.imageUri}
+          title={itemData.item.title}
+          address={null}
+          onSelect={() => {
+            navigation.navigate("PlaceDetail", {
+              placeTitle: itemData.item.title,
+              placeId: itemData.item.id,
+            });
+          }}
+        />
+      )}
+    />
   );
 }
